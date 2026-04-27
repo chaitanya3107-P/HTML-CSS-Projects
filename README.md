@@ -12,7 +12,7 @@ This repository contains multiple HTML & CSS projects built for practice:
 - [YouTube Interface](https://chaitanya3107-P.github.io/HTML-CSS-Projects/Youtube%20Interface/)
 - [Amazon Clone](https://chaitanya3107-P.github.io/HTML-CSS-Projects/amazon-clone/)
 - [Spotify Clone](https://chaitanya3107-P.github.io/HTML-CSS-Projects/spotify_clone/)
-- [Sine Calculator](https://chaitanya3107-P.github.io/HTML-CSS-Projects/arya_calculator/)
+- [Sine](https://chaitanya3107-P.github.io/HTML-CSS-Projects/sine/)
 
 ## 📂 How to View
 
