@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Four-Road Intersection Traffic Control</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #87CEEB, #E0F6FF);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+        }
+
+        /* Intersection Container */
+        .intersection {
+            position: relative;
+            width: 600px;
+            height: 600px;
+            background: #333;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Road Segments */
+        .road {
+            position: absolute;
+            background: #444;
+        }
+
+        .road-horizontal {
+            width: 600px;
+            height: 200px;
+            top: 200px;
+            left: 0;
+        }
+
+        .road-vertical {
+            width: 200px;
+            height: 600px;
+            top: 0;
+            left: 200px;
+        }
+
+        /* Center intersection area */
+        .center-junction {
+            position: absolute;
+            top: 200px;
+            left: 200px;
+            width: 200px;
+            height: 200px;
+            background: #555;
+            border: 3px solid #fff;
+        }
+
+        /* Lane markings */
+        .lane-marking {
+            position: absolute;
+            background: white;
+        }
+
+        /* Horizontal road markings */
+        .h-marking-top {
+            top: 250px;
+            left: 0;
+            width: 600px;
+            height: 3px;
+        }
+
+        .h-marking-bottom {
+            top: 347px;
+            left: 0;
+            width: 600px;
+            height: 3px;
+        }
+
+        /* Vertical road markings */
+        .v-marking-left {
+            top: 0;
+            left: 250px;
+            width: 3px;
+            height: 600px;
+        }
+
+        .v-marking-right {
+            top: 0;
+            left: 347px;
+            width: 3px;
+            height: 600px;
+        }
+
+        /* Traffic Lights */
+        .traffic-light {
+            position: absolute;
+            width: 60px;
+            height: 140px;
+            background: #2c2c2c;
+            border-radius: 15px;
+            padding: 10px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.4);
+            z-index: 10;
+        }
+
+        .traffic-light::after {
+            content: '';
+            position: absolute;
+            bottom: -80px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 80px;
+            background: #666;
+            border-radius: 3px;
+        }
+
+        /* Traffic light positions */
+        .light-north {
+            top: 140px;
+            left: 270px;
+        }
+
+        .light-south {
+            bottom: 140px;
+            right: 270px;
+            transform: rotate(180deg);
+        }
+
+        .light-east {
+            top: 270px;
+            right: 140px;
+            transform: rotate(90deg);
+        }
+
+        .light-west {
+            top: 270px;
+            left: 140px;
+            transform: rotate(-90deg);
+        }
+
+        /* Individual light bulbs */
+        .light {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin: 5px auto;
+            box-shadow: inset 0 3px 8px rgba(255, 255, 255, 0.2);
+        }
+
+        /* Light states */
+        .red-light {
+            background: radial-gradient(circle at 30% 30%, #ff6b6b, #ff0000, #cc0000);
+            box-shadow: 0 0 15px #ff0000, inset 0 3px 8px rgba(255, 255, 255, 0.2);
+        }
+
+        .yellow-light {
+            background: radial-gradient(circle at 30% 30%, #666, #444);
+            box-shadow: inset 0 3px 8px rgba(255, 255, 255, 0.1);
+        }
+
+        .green-light {
+            background: radial-gradient(circle at 30% 30%, #51cf66, #009900, #007700);
+            box-shadow: 0 0 15px #009900, inset 0 3px 8px rgba(255, 255, 255, 0.2);
+        }
+
+        .inactive-light {
+            background: radial-gradient(circle at 30% 30%, #666, #444);
+            box-shadow: inset 0 3px 8px rgba(255, 255, 255, 0.1);
+        }
+
+        /* Vehicles */
+        .vehicle {
+            position: absolute;
+            z-index: 5;
+        }
+
+        /* Cars waiting */
+        .car {
+            width: 80px;
+            height: 40px;
+            background: #ff6b35;
+            border-radius: 8px;
+        }
+
+        .car::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 10px;
+            width: 12px;
+            height: 12px;
+            background: #333;
+            border-radius: 50%;
+            box-shadow: 48px 0 #333;
+        }
+
+        /* Moving car on green signal road */
+        .moving-car {
+            background: #28a745;
+            animation: moveEast 4s infinite linear;
+        }
+
+        @keyframes moveEast {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(300px); }
+        }
+
+        /* Waiting cars positions */
+        .car-north-wait {
+            top: 80px;
+            left: 230px;
+            transform: rotate(90deg);
+        }
+
+        .car-south-wait {
+            bottom: 80px;
+            right: 230px;
+            transform: rotate(-90deg);
+        }
+
+        .car-west-wait {
+            top: 230px;
+            left: 80px;
+        }
+
+        /* Moving car on east road with green signal */
+        .car-east-moving {
+            top: 320px;
+            left: 80px;
+            transform: rotate(180deg);
+        }
+
+        /* Direction labels */
+        .direction-label {
+            position: absolute;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        .label-north { top: 20px; left: 280px; }
+        .label-south { bottom: 20px; right: 280px; }
+        .label-east { top: 280px; right: 20px; }
+        .label-west { top: 280px; left: 20px; }
+
+        /* Status indicator */
+        .status {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .status h3 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            margin: 5px 0;
+        }
+
+        .status-light {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .go { background: #009900; }
+        .stop { background: #ff0000; }
+    </style>
+</head>
+<body>
+    <div class="intersection">
+        <!-- Road segments -->
+        <div class="road road-horizontal"></div>
+        <div class="road road-vertical"></div>
+        <div class="center-junction"></div>
+
+        <!-- Lane markings -->
+        <div class="lane-marking h-marking-top"></div>
+        <div class="lane-marking h-marking-bottom"></div>
+        <div class="lane-marking v-marking-left"></div>
+        <div class="lane-marking v-marking-right"></div>
+
+        <!-- Traffic Lights -->
+        <!-- North Traffic Light (Red) -->
+        <div class="traffic-light light-north">
+            <div class="light red-light"></div>
+            <div class="light inactive-light"></div>
+            <div class="light inactive-light"></div>
+        </div>
+
+        <!-- South Traffic Light (Red) -->
+        <div class="traffic-light light-south">
+            <div class="light red-light"></div>
+            <div class="light inactive-light"></div>
+            <div class="light inactive-light"></div>
+        </div>
+
+        <!-- East Traffic Light (Green) -->
+        <div class="traffic-light light-east">
+            <div class="light inactive-light"></div>
+            <div class="light inactive-light"></div>
+            <div class="light green-light"></div>
+        </div>
+
+        <!-- West Traffic Light (Red) -->
+        <div class="traffic-light light-west">
+            <div class="light red-light"></div>
+            <div class="light inactive-light"></div>
+            <div class="light inactive-light"></div>
+        </div>
+
+        <!-- Vehicles -->
+        <!-- Waiting cars at red signals -->
+        <div class="vehicle car car-north-wait"></div>
+        <div class="vehicle car car-south-wait"></div>
+        <div class="vehicle car car-west-wait"></div>
+
+        <!-- Moving car on green signal road -->
+        <div class="vehicle car moving-car car-east-moving"></div>
+
+        <!-- Direction Labels -->
+        <div class="direction-label label-north">NORTH</div>
+        <div class="direction-label label-south">SOUTH</div>
+        <div class="direction-label label-east">EAST</div>
+        <div class="direction-label label-west">WEST</div>
+
+        <!-- Traffic Status -->
+        <div class="status">
+            <h3>Traffic Status</h3>
+            <div class="status-item">
+                <div class="status-light go"></div>
+                <span>East Road: GO</span>
+            </div>
+            <div class="status-item">
+                <div class="status-light stop"></div>
+                <span>North Road: STOP</span>
+            </div>
+            <div class="status-item">
+                <div class="status-light stop"></div>
+                <span>South Road: STOP</span>
+            </div>
+            <div class="status-item">
+                <div class="status-light stop"></div>
+                <span>West Road: STOP</span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

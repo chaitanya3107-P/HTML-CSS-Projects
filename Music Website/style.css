@@ -1,0 +1,348 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Roboto, sans-serif;
+}
+
+.container {
+    width: 100%;
+}
+
+/* Navigation */
+.nav {
+    width: 100%;
+    background-color: #270082;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem; 
+}
+
+.tunes_c {
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: #FFFFFF;
+}
+
+.frame2 {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.frame2_c {
+    font-weight: 500;
+    font-size: 1rem;
+    color: #FFFFFF;
+    cursor: pointer;
+}
+
+/* Hero Section */
+.main1 {
+    width: 100%;
+    min-height: 100vh;
+    background-image: url(./images/image1.jpg);
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 2rem;
+}
+
+.hero_section {
+    max-width: 900px;
+    color: #FFFFFF;
+}
+
+.text1_c {
+    font-weight: 700;
+    font-size: clamp(2rem, 5vw, 4.5rem);
+}
+
+.text2_c {
+    font-weight: 400;
+    font-size: clamp(1rem, 2.5vw, 1.5rem);
+    margin-top: 1rem;
+}
+
+.text3_c {
+    font-weight: 400;
+    font-size: clamp(0.9rem, 2vw, 1.125rem);
+    margin-top: 1.5rem;
+    line-height: 1.5;
+}
+
+/* Music Section */
+.main2 {
+    width: 100%;
+    background-color:#281154;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    gap: 2rem;
+    padding: 5rem 1rem;
+    color: #fff;
+}
+
+.music {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.music_logo {
+    color: white;
+    font-size: 40px;
+}
+
+.music_c {
+    font-weight: 700;
+    font-size: 36px;
+    color: #FFFFFF;
+}
+
+.font1_c {
+    font-weight: 700;
+    font-size: 24px;
+    color: white;
+}
+
+.font2_c {
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 29px;
+    text-align: center;
+    color: #FFFFFF;
+}
+
+.font3 {
+    background-color: #DC0000;
+    padding: 1rem 2rem;
+    cursor: pointer;
+}
+
+.font3_c {
+    font-size: 18px;
+    color: #FFFFFF;
+}
+
+.font4_c {
+    font-size: 14px;
+    color: white;
+}
+
+/* Group 2 (Movies Image) */
+.group2 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 4rem 1rem;
+    width: 100%;
+}
+
+.group2 img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Font (Movies Text) */
+.font {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    gap: 2rem;
+    padding: 2rem 1rem;
+}
+
+.font5_c {
+    font-weight: 600;
+    font-size: 24px;
+    color: #000;
+}
+
+.font6_c {
+    font-weight: 300;
+    font-size: 18px;
+    line-height: 32px;
+    max-width: 900px;
+    color: #000;
+}
+
+.font7 {
+    background-color:#37008E;
+    padding: 0.8rem 2rem;
+    color: #fff;
+    cursor: pointer;
+}
+
+/* Group 3 */
+.group3 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 4rem 1rem;
+}
+
+.group3 img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Entertainment Section */
+.main5 {
+    width: 100%;
+    background-image: url(./images/image4.jpg);
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 6rem 1rem;
+    gap: 2rem;
+}
+
+.font8_c {
+    font-weight: 500;
+    font-size: 24px;
+    color: #f0f0f0;
+}
+
+.font9_c {
+    font-weight: 400;
+    font-size: 16px;
+    color: #FFFFFF;
+    max-width: 900px;
+    line-height: 1.6;
+}
+
+/* Gift Cards Section */
+.main6 {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 2rem;
+    padding: 4rem 1rem;
+}
+
+.main6 img {
+    max-width: 100%;
+    height: auto;
+}
+
+.card2 {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 500px;
+}
+
+.cardx {
+    font-weight: 700;
+    font-size: 24px;
+    color: #000;
+}
+
+.cardxx, .cardxxxxx {
+    font-weight: 400;
+    font-size: 14px;
+    color: #000;
+    line-height: 1.6;
+}
+
+.cardxxx {
+    border: 1px solid #9E9E9E;
+}
+
+.cardxxxx {
+    display: inline-block;
+    background-color:#37008E;
+    color: #FFFFFF;
+    padding: 0.6rem 1.5rem;
+    cursor: pointer;
+}
+
+/* Footer Links */
+.main7 {
+    background-color: #1B0058;
+    padding: 3rem 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.frame13 {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem;
+}
+
+.box {
+    min-width: 200px;
+}
+
+.boxh1 {
+    color: #FFFFFF;
+    font-weight: 600;
+    font-size: 18px;
+    margin-bottom: 0.5rem;
+}
+
+.content {
+    font-weight: 400;
+    font-size: 14px;
+    color: #FFFFFF;
+    line-height: 1.6;
+}
+
+.line {
+    border: 1px solid #FFFFFF;
+    margin: 0.5rem 0;
+}
+
+/* Footer */
+.eframe {
+    background-color: #270082;
+    width: 100%;
+    padding: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #FFFFFF;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .nav {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .frame2 {
+        justify-content: center;
+    }
+
+    .main6 {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .font6_c, .font9_c {
+        max-width: 100%;
+    }
+}
