@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Aryabhatta's Sine Calculator</title>
+    <meta charset="UTF-8">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #0a0f1f;
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        #bg-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .wrapper {
+            position: relative;
+            z-index: 1;
+            padding: 30px 16px 50px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 28px;
+            font-weight: 600;
+            color: #e8eaf6;
+            margin-bottom: 4px;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 13px;
+            color: #7986cb;
+            margin-bottom: 28px;
+        }
+
+        .card {
+            background: rgba(10, 15, 31, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+            padding: 28px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .input-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+        }
+
+        .input-row label {
+            font-size: 14px;
+            color: #9fa8da;
+            min-width: 140px;
+        }
+
+        input[type=number] {
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            color: #e8eaf6;
+            font-size: 15px;
+            padding: 9px 14px;
+            width: 160px;
+            outline: none;
+        }
+
+        input[type=number]:focus { border-color: #5c6bc0; }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 10px 22px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            border: none;
+            transition: background 0.15s, transform 0.1s;
+        }
+
+        button:active { transform: scale(0.97); }
+
+        .btn-primary { background: rgba(255,152,0,0.85); color: #fff; }
+        .btn-primary:hover { background: #e68900; }
+
+        .btn-secondary {
+            background: rgba(92,107,192,0.25);
+            color: #9fa8da;
+            border: 1px solid rgba(92,107,192,0.4);
+        }
+        .btn-secondary:hover { background: rgba(92,107,192,0.4); }
+
+        .btn-danger {
+            background: rgba(229,57,53,0.2);
+            color: #ef9a9a;
+            border: 1px solid rgba(229,57,53,0.3);
+        }
+        .btn-danger:hover { background: rgba(229,57,53,0.35); }
+
+        #result {
+            text-align: center;
+            font-size: 18px;
+            font-weight: 500;
+            color: #80cbc4;
+            min-height: 28px;
+            margin-bottom: 6px;
+        }
+
+        #result-name {
+            text-align: center;
+            font-size: 14px;
+            color: #ce93d8;
+            min-height: 22px;
+            margin-bottom: 16px;
+            line-height: 1.8;
+        }
+
+        .chart-wrap {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 24px;
+        }
+
+        canvas#sineChart {
+            width: 100% !important;
+            height: 200px !important;
+            display: block;
+        }
+
+        .tbl-wrap {
+            overflow-x: auto;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        th {
+            background: rgba(92,107,192,0.3);
+            color: #9fa8da;
+            padding: 10px 12px;
+            text-align: left;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 9px 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            color: #cfd8dc;
+            white-space: nowrap;
+        }
+
+        tr:last-child td { border-bottom: none; }
+        tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+
+        .td-deva   { color: #ce93d8; font-size: 16px; letter-spacing: 1px; }
+        .td-iso    { color: #9fa8da; font-style: italic; }
+        .td-hindu  { color: #ffb74d; text-align: right; }
+        .td-jya    { color: #ffcc80; font-family: monospace; text-align: right; }
+        .td-modern { color: #80cbc4; font-family: monospace; text-align: right; }
+        .td-num    { color: #546e7a; font-size: 11px; }
+        .td-angle  { font-weight: 500; color: #e8eaf6; }
+
+        .divider {
+            border: none;
+            border-top: 1px solid rgba(255,255,255,0.07);
+            margin: 22px 0;
+        }
+
+        .info-box {
+            background: rgba(92,107,192,0.08);
+            border: 1px solid rgba(92,107,192,0.2);
+            border-radius: 10px;
+            padding: 14px 16px;
+            margin-bottom: 20px;
+            font-size: 12px;
+            color: #90a4ae;
+            line-height: 1.8;
+        }
+
+        .info-box strong { color: #c5cae9; }
+    </style>
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+
+<div class="wrapper">
+    <h1>Aryabhatta's Sine Calculator</h1>
+    <p class="subtitle">Ancient Indian mathematics, visualized</p>
+
+    <div class="card">
+
+        <div class="input-row">
+            <label>Angle (degrees)</label>
+            <input type="number" id="angleInput" placeholder="e.g. 3.75, 30, 45" min="0" max="360" step="3.75">
+        </div>
+
+        <div class="actions">
+            <button class="btn-primary" onclick="calculateSine()">Calculate Sine</button>
+            <button class="btn-secondary" onclick="generateTable()">Show Aryabhatta's 24-Entry Table</button>
+            <button class="btn-danger" onclick="clearAll()">Clear</button>
+        </div>
+
+        <div id="result"></div>
+        <div id="result-name"></div>
+
+        <div class="chart-wrap">
+            <canvas id="sineChart"></canvas>
+        </div>
+
+        <div class="info-box">
+            <strong>About this table:</strong> Aryabhatta divided the quarter circle (90°) into
+            <strong>24 equal parts of 3° 45′</strong> each. The Devanagari syllables encode
+            the cumulative sine differences using his unique <em>āryabhaṭa numerical notation</em>.
+            R = <strong>3438</strong> arc-minutes. The Hindu-Arabic column shows the <em>difference</em>
+            added at each step; Jyā (A) is the running cumulative total.
+        </div>
+
+        <hr class="divider">
+
+        <div class="tbl-wrap">
+            <table id="sineTable">
+                <thead>
+                    <tr>
+                        <th>Sl.</th>
+                        <th>Angle (A)</th>
+                        <th>Devanagari Notation</th>
+                        <th>Aryabhatta's Jyā (A)</th>
+                        <th>Modern Sine Value</th>
+                    </tr>
+                </thead>
+                <tbody id="sineTableBody"></tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+<script>
+/* ── Exact 24 entries from Aryabhatta's Āryabhaṭīya (as shown in image) ── */
+const ARYA_TABLE = [
+    { deg: 3.75,  dmin: "03° 45′", deva: "मखि",  iso: "makhi",  hindu: 225, jya: 225,  modern: 224.856   },
+    { deg: 7.50,  dmin: "07° 30′", deva: "भखि",  iso: "bhakhi", hindu: 224, jya: 449,  modern: 448.749   },
+    { deg: 11.25, dmin: "11° 15′", deva: "फखि",  iso: "phakhi", hindu: 222, jya: 671,  modern: 670.7205  },
+    { deg: 15.00, dmin: "15° 00′", deva: "धखि",  iso: "dhakhi", hindu: 219, jya: 890,  modern: 889.8199  },
+    { deg: 18.75, dmin: "18° 45′", deva: "णखि",  iso: "ṇakhi",  hindu: 215, jya: 1105, modern: 1105.1089 },
+    { deg: 22.50, dmin: "22° 30′", deva: "ञखि",  iso: "ñakhi",  hindu: 210, jya: 1315, modern: 1315.6656 },
+    { deg: 26.25, dmin: "26° 15′", deva: "ङखि",  iso: "ṅakhi",  hindu: 205, jya: 1520, modern: 1520.5885 },
+    { deg: 30.00, dmin: "30° 00′", deva: "हस्झ", iso: "hasjha", hindu: 199, jya: 1719, modern: 1719      },
+    { deg: 33.75, dmin: "33° 45′", deva: "स्कति",iso: "skati",  hindu: 191, jya: 1910, modern: 1910.0505 },
+    { deg: 37.50, dmin: "37° 30′", deva: "किष्ण",iso: "kiṣṇa",  hindu: 183, jya: 2093, modern: 2092.9218 },
+    { deg: 41.25, dmin: "41° 15′", deva: "श्घकि",iso: "śghaki", hindu: 174, jya: 2267, modern: 2266.8309 },
+    { deg: 45.00, dmin: "45° 00′", deva: "किघ्व", iso: "kighva", hindu: 164, jya: 2431, modern: 2431.0331 },
+    { deg: 48.75, dmin: "48° 45′", deva: "घ्लकि", iso: "ghlaki", hindu: 154, jya: 2585, modern: 2584.8253 },
+    { deg: 52.50, dmin: "52° 30′", deva: "किग्र", iso: "kigra",  hindu: 143, jya: 2728, modern: 2727.5488 },
+    { deg: 56.25, dmin: "56° 15′", deva: "हक्य",  iso: "hakya",  hindu: 131, jya: 2859, modern: 2858.5925 },
+    { deg: 60.00, dmin: "60° 00′", deva: "धकि",  iso: "dhaki",  hindu: 119, jya: 2978, modern: 2977.3953 },
+    { deg: 63.75, dmin: "63° 45′", deva: "किच",  iso: "kica",   hindu: 106, jya: 3084, modern: 3083.4485 },
+    { deg: 67.50, dmin: "67° 30′", deva: "स्ग",   iso: "sga",    hindu: 93,  jya: 3177, modern: 3176.2978 },
+    { deg: 71.25, dmin: "71° 15′", deva: "झश",   iso: "jhaśa",  hindu: 79,  jya: 3256, modern: 3255.5458 },
+    { deg: 75.00, dmin: "75° 00′", deva: "ङ्व",   iso: "ṅva",    hindu: 65,  jya: 3321, modern: 3320.853  },
+    { deg: 78.75, dmin: "78° 45′", deva: "क्ल",   iso: "kla",    hindu: 51,  jya: 3372, modern: 3371.9398 },
+    { deg: 82.50, dmin: "82° 30′", deva: "प्त",   iso: "pta",    hindu: 37,  jya: 3409, modern: 3408.5874 },
+    { deg: 86.25, dmin: "86° 15′", deva: "फ",    iso: "pha",    hindu: 22,  jya: 3431, modern: 3430.639  },
+    { deg: 90.00, dmin: "90° 00′", deva: "छ",    iso: "cha",    hindu: 7,   jya: 3438, modern: 3438      },
+];
+
+function closestArya(deg) {
+    let best = null, bestD = 999;
+    ARYA_TABLE.forEach(e => {
+        const d = Math.abs(e.deg - deg);
+        if (d < bestD) { bestD = d; best = e; }
+    });
+    return bestD <= 1.875 ? best : null;
+}
+
+/* ── Animated Background ── */
+const bgCanvas = document.getElementById('bg-canvas');
+const bgCtx = bgCanvas.getContext('2d');
+let W, H, frame = 0;
+
+function resizeBg() { W = bgCanvas.width = window.innerWidth; H = bgCanvas.height = window.innerHeight; }
+resizeBg();
+window.addEventListener('resize', resizeBg);
+
+function drawBg() {
+    bgCtx.clearRect(0, 0, W, H);
+    const t = frame * 0.012;
+    bgCtx.strokeStyle = 'rgba(255,255,255,0.04)';
+    bgCtx.lineWidth = 0.5;
+    const gs = 40;
+    for (let x = 0; x < W; x += gs) { bgCtx.beginPath(); bgCtx.moveTo(x,0); bgCtx.lineTo(x,H); bgCtx.stroke(); }
+    for (let y = 0; y < H; y += gs) { bgCtx.beginPath(); bgCtx.moveTo(0,y); bgCtx.lineTo(W,y); bgCtx.stroke(); }
+    const waves = [
+        { a:30, f:0.013, speed:1.0, col:'rgba(92,107,192,0.3)',  lw:1.8 },
+        { a:20, f:0.020, speed:1.4, col:'rgba(38,166,154,0.2)',  lw:1.2 },
+        { a:14, f:0.030, speed:0.7, col:'rgba(255,152,0,0.15)',  lw:0.9 }
+    ];
+    waves.forEach(w => {
+        bgCtx.beginPath();
+        bgCtx.strokeStyle = w.col;
+        bgCtx.lineWidth = w.lw;
+        const mid = H * 0.68;
+        for (let x = 0; x <= W; x += 2) {
+            const y = mid + Math.sin(x * w.f + t * w.speed) * w.a;
+            x === 0 ? bgCtx.moveTo(x,y) : bgCtx.lineTo(x,y);
+        }
+        bgCtx.stroke();
+    });
+    frame++;
+    requestAnimationFrame(drawBg);
+}
+drawBg();
+
+/* ── Calculator ── */
+let chart;
+
+function calculateSine() {
+    const raw = document.getElementById('angleInput').value;
+    if (raw === '') { document.getElementById('result').innerText = 'Please enter an angle.'; return; }
+    const angle = parseFloat(raw);
+    const rad = angle * Math.PI / 180;
+    const sv = Math.sin(rad);
+    const jya = (sv * 3438).toFixed(4);
+
+    document.getElementById('result').innerHTML =
+        `sin(${angle}°) = <strong style="color:#80cbc4">${sv.toFixed(6)}</strong>
+         &nbsp;|&nbsp; Jyā = <strong style="color:#ffcc80">${jya}</strong>`;
+
+    const entry = closestArya(angle);
+    if (entry) {
+        document.getElementById('result-name').innerHTML =
+            `Devanagari: <strong style="color:#ce93d8;font-size:20px">${entry.deva}</strong>
+             &nbsp;|&nbsp; Aryabhatta's Jyā: <strong style="color:#ffcc80">${entry.jya}′</strong>
+             &nbsp;|&nbsp; Modern sine: <strong style="color:#80cbc4">${parseFloat(Math.sin(entry.deg * Math.PI / 180).toFixed(4))}</strong>`;
+    } else {
+        document.getElementById('result-name').innerHTML =
+            `<span style="color:#546e7a">Use a multiple of 3° 45′ (3.75°) to see Aryabhatta's original notation</span>`;
+    }
+
+    drawGraph(angle);
+}
+
+function drawGraph(userAngle) {
+    const ctx = document.getElementById('sineChart').getContext('2d');
+    const labels = [], data = [];
+    for (let i = 0; i <= 360; i += 2) {
+        labels.push(i);
+        data.push(parseFloat(Math.sin(i * Math.PI / 180).toFixed(6)));
+    }
+    if (chart) chart.destroy();
+    chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels,
+            datasets: [
+                {
+                    label: 'sin(θ)',
+                    data,
+                    borderColor: '#5c6bc0',
+                    borderWidth: 2,
+                    fill: true,
+                    backgroundColor: 'rgba(92,107,192,0.1)',
+                    tension: 0.4,
+                    pointRadius: 0
+                },
+                {
+                    label: 'Your angle',
+                    data: labels.map(x => x === Math.round(userAngle)
+                        ? parseFloat(Math.sin(x * Math.PI / 180).toFixed(6)) : null),
+                    borderColor: '#ff7043',
+                    pointRadius: 7,
+                    pointBackgroundColor: '#ff7043',
+                    showLine: false
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { labels: { color: '#9fa8da', font: { size: 12 } } } },
+            scales: {
+                x: { ticks: { color: '#546e7a', maxTicksLimit: 13, font: { size: 11 } }, grid: { color: 'rgba(255,255,255,0.05)' } },
+                y: { min: -1, max: 1, ticks: { color: '#546e7a', font: { size: 11 } }, grid: { color: 'rgba(255,255,255,0.05)' } }
+            }
+        }
+    });
+}
+
+function generateTable() {
+    const tbody = document.getElementById('sineTableBody');
+    tbody.innerHTML = '';
+    ARYA_TABLE.forEach((e, i) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td class="td-num">${i + 1}</td>
+            <td class="td-angle">${e.dmin}</td>
+            <td class="td-deva">${e.deva}</td>
+            <td class="td-jya">${e.jya}′</td>
+            <td class="td-modern">${parseFloat(Math.sin(e.deg * Math.PI / 180).toFixed(4))}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+function clearAll() {
+    document.getElementById('angleInput').value = '';
+    document.getElementById('result').innerText = '';
+    document.getElementById('result-name').innerText = '';
+    if (chart) { chart.destroy(); chart = null; }
+    document.getElementById('sineTableBody').innerHTML = '';
+}
+
+document.getElementById('angleInput')
+    .addEventListener('keydown', e => { if (e.key === 'Enter') calculateSine(); });
+
+generateTable();
+</script>
+
+</body>
+</html>
