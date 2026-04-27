@@ -13,6 +13,7 @@ This repository contains multiple HTML & CSS projects built for practice:
 - [Amazon Clone](https://chaitanya3107-P.github.io/HTML-CSS-Projects/amazon-clone/)
 - [Spotify Clone](https://chaitanya3107-P.github.io/HTML-CSS-Projects/spotify_clone/)
 - [Sine](https://chaitanya3107-P.github.io/HTML-CSS-Projects/sine/)
+- [Aryabhatta Sine Calculator](https://chaitanya3107-P.github.io/HTML-CSS-Projects/arya_calculator/)
 
 ## 📂 How to View
 
